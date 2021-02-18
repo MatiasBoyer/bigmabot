@@ -1,0 +1,120 @@
+from asyncio.windows_events import NULL
+import discord, asyncio, random
+
+token = "NjEzNDM1OTM4Mjk4NjU4ODM2.XVw4vA.epIydCz519xec8NFKBSvBa4nAAE"
+
+putear_words = ["lol", "grietita", "grieta", "league", "league of legends", "valorant", "l0l", "l3ague", "l o l"]
+respuestas_putearwords = ["que juego de mierda", "como vas a jugar eso boliviano", 
+"cerra el orto paraguayo", "cs good lol bad", "la concha de tu madre cerra el orto", "??? que es esa mierda",
+"porque no un counter mejor?"]
+
+def ArrayToStr(arr, start):
+    str1 = ""
+
+    for x in range(start, len(arr)):
+        str1 += arr[x] + " "
+    
+    return str1
+
+class MyClient(discord.Client):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    async def parse_command(self, content, _message):
+        args = content.split()
+        print(f"Command->'{args}'")
+
+        if len(args) == 1:
+            await _message.channel.send("pero pone un comando la concha de tu madre")
+            return
+
+        if args[1] == "send":
+            sendstr = ArrayToStr(args, 3)
+            channel = client.get_channel(int(args[2]))
+            await channel.send(sendstr)
+            return
+        if args[1] == "matar_judios":
+            matarjews = args[2] == "True"
+
+            channel = client.get_channel(540699443792576542)
+            msg = await channel.fetch_message(809593968001024010)
+
+            users_who_reacted = []
+            for _reaction in msg.reactions:
+                async for user in _reaction.users():
+                    users_who_reacted.append(user)
+            
+            svguild = client.get_guild(399758472499167232)
+
+            await channel.send("COMANDO DESHABILITADO POR EL BIGMAs")
+            return
+
+            #for x in users_who_reacted:
+            #    print(x)
+
+            all_users = []
+
+            for member in svguild.members:
+                all_users.append(member)
+
+            for x in users_who_reacted:
+                all_users.remove(x)
+
+            ignored_users = ["Groovy", "hitlerbot", "MEE6", "Emmanuel", "Text To Speech"]
+
+            for iu in ignored_users:
+                userinlist = NULL
+                for auser in all_users:
+                    if auser.name == iu:
+                        userinlist = auser
+                        break
+                if userinlist != NULL:
+                    all_users.remove(userinlist)
+
+            #await channel.send("ESTA ES LA LISTA DEFINITIVA DE PARAGUAYOS QUE NO REACCIONARON AL MENSAJE")
+            #await asyncio.sleep(2)
+
+            usernamelist = ""
+            for u in all_users:
+                usernamelist += f"'{u.name}#{u.discriminator}' - "
+
+            #await channel.send(usernamelist)
+
+            if matarjews:
+                #await channel.send("GRACIAS POR TODO, HASTA LA PROXIMA")
+                for u in all_users:
+                    await u.kick(reason="no reaccionaste bobo") #channel.kick(u, reason="no reaccionaste bobo")
+                return
+
+            await asyncio.sleep(1)
+            #await channel.send("SI ESTAS EN ESTA LISTA PARA LAS 12, TE VAS A IR DOMADITO")
+            #await channel.send("SIN EXCEPCIONES. BOLITA.")
+            #await channel.send(sendstr)
+            
+            return
+
+        print("Command args[1] unknown!")
+        return
+
+
+    async def on_ready(self):
+        print("Logged on as {0}!".format(self.user))
+
+    async def on_message(self, message):
+        if message.content.startswith("./cmd"):
+            if message.author.id == 301493792366657537:
+                await self.parse_command(message.content, message)
+            else:
+                await message.channel.send("y vos quien so")
+        else:
+            for x in putear_words:
+                if x in message.content or x.capitalize() in message.content.capitalize():
+                    await message.channel.send(random.choice(respuestas_putearwords))
+                    return
+
+            
+intents = discord.Intents.default()
+intents.members = True
+
+client = MyClient(intents=intents)
+client.run(token)
