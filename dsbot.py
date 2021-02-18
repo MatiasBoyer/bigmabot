@@ -12,7 +12,7 @@ from discord.ext.commands.core import command, has_permissions
 #endregion
 
 #region USEFUL VARIABLES
-token = "NjEzNDM1OTM4Mjk4NjU4ODM2.XVw4vA.epIydCz519xec8NFKBSvBa4nAAE"
+token = "**********"
 random_answers = []
 #endregion
 
