@@ -68,3 +68,20 @@ def returndatafromfile(f):
     with open(f) as json_File:
         data = json.load(json_File)
         return data
+
+def LOADJSON(random_answers):
+    random_answers.clear()
+    answerlist = returndatafromfile("answerlist.json")
+    for x in answerlist["LIST"]:
+        a = word_answering_random(x["NAME"], x["TYPE"], x["WORDS"], x["ANSWERS"])
+        random_answers.append(a)
+
+def SAVEJSON(random_answers):
+    answerstojson = []
+    j = "{ " + "\"LIST\": "
+
+    for x in random_answers:
+        answerstojson.append(x.toJson())
+    atojson = j + arrayToStrWithoutQuotationMarks(answerstojson) + "]}"
+    #print(atojson)
+    savedatatofile("answerlist.json", atojson)
