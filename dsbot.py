@@ -12,11 +12,15 @@ from discord.ext.commands.core import command, has_permissions
 #endregion
 
 #region USEFUL VARIABLES
-token = "**********"
+token = ""
 random_answers = []
 #endregion
 
 #region SAVING/LOADING HELPERS
+def LOADTOKEN():
+    with open("token.txt", 'r') as f:
+        token = f.read()
+
 def LOADJSON():
     random_answers.clear()
     answerlist = ext.returndatafromfile("answerlist.json")
@@ -100,15 +104,24 @@ class Answers(commands.Cog):
                 em = discord.Embed(title = listName)
                 em.add_field(name = "TYPE", value = x.returnType())
 
+
                 w_val = ""
-                for w in x.returnWordList():
-                    w_val += w + '\n'
-                em.add_field(name = "WORDS", value = w_val, inline = False)
+                for w in range(0, len(x.returnWordList())):
+                    w_val += str(w) + " ->\t" + x.returnWordList()[w] + '\n'
+                
+                if len(w_val) > 0:
+                    em.add_field(name = "WORDS", value = w_val, inline = False)
+                else:
+                    em.add_field(name = "WORDS", value = "There's no words", inline = False)
 
                 a_val = ""
-                for a in x.returnAnswerList():
-                    a_val += a + '\n'
-                em.add_field(name = "ANSWERS", value = a_val, inline = False)
+                for a in range(0, len(x.returnAnswerList())):
+                    a_val += str(a) + " ->\t" + x.returnAnswerList()[a] + '\n'
+
+                if len(a_val) > 0:
+                    em.add_field(name = "ANSWERS", value = a_val, inline = False)
+                else:
+                    em.add_field(name = "WORDS", value = "There's no words", inline = False)
 
                 await ctx.send(embed = em)
                 return
@@ -141,6 +154,26 @@ class Answers(commands.Cog):
                 return
 
         await ctx.send("List doesnt exist!")
+
+    @commands.command(name = "answers.removeat")
+    async def answers_removeat(self, ctx, listName, deleteWhat, index):
+        if deleteWhat == "WORD":
+            for x in random_answers:
+                if x.returnName() == listName:
+                    x.removeWord(int(index))
+                    await ctx.send("x.removeWord() called!")
+                    return
+            await ctx.send(f"List '{listName}' doesn't exist!")
+            return
+        if deleteWhat == "ANSWER":
+            for x in random_answers:
+                if x.returnName() == listName:
+                    x.removeAnswer(int(index))
+                    await ctx.send("x.removeAnswer() called!")
+                    return
+            await ctx.send(f"List '{listName}' doesn't exist!")
+            return
+        await ctx.send(f"I don't know what '{deleteWhat}' is!")
 
     @commands.command(name = "answers.addanswertolist")
     async def answers_addanswertolist(self, ctx, listName, answer):
@@ -196,6 +229,12 @@ class File(commands.Cog):
         for x in onlyfiles:
             t += x + "\n"
         await ctx.send(f"`{t}`")
+    
+    @commands.command(name = "file.remove")
+    @has_permissions(manage_roles=True)
+    async def file_remove(self, ctx, filename):
+        os.remove("./uploads/" + filename)
+        await ctx.send("os.remove() called!")
 
 class RandomCommands(commands.Cog):
     @commands.command(name = "sendtobigma")
@@ -204,6 +243,14 @@ class RandomCommands(commands.Cog):
         await u.send(msg)
         playsound("./uploads/alarm.mp3")
         await ctx.send(f"Ya le mande el dm a bigma y le puse un sonido en la pc.")
+
+    @commands.command()
+    async def betterhelp(self, ctx):
+        h = ""
+        with open("betterhelp.txt", 'r') as file:
+            h = file.read()
+        await ctx.send(str(h))
+
 #endregion
 
 #region BOT EVENTS    
@@ -244,6 +291,7 @@ async def on_message(message):
 #endregion
 
 #region BOT INITIALIZATION
+LOADTOKEN()
 LOADJSON()
 
 bot.add_cog(Rand())

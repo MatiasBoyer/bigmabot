@@ -40,6 +40,12 @@ class word_answering_random():
     def addAnswer(self, text):
         self.answerlist.append(text)
 
+    def removeWord(self, id):
+        del self.wordlist[id]
+
+    def removeAnswer(self, id):
+        del self.answerlist[id]
+
     def checkword(self, text):
         for w in self.wordlist:
             if w.upper() in text.upper():
@@ -55,7 +61,7 @@ class word_answering_random():
         return "{ " + x + " }"
 
 def savedatatofile(f, data):
-    with open(f, 'w') as file:
+    with open(f, 'w', encoding="utf-8") as file:
         file.write(data)
 
 def returndatafromfile(f):
