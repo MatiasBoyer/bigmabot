@@ -1,3 +1,10 @@
 token.txt
+<<<<<<< HEAD
 uploads/
 geckodriver.log
+=======
+config.ini
+geckodriver.log
+uploads/
+temp/
+>>>>>>> development
