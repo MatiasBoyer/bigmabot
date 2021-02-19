@@ -1,5 +1,5 @@
-from com.rand import Rand
-import dsbot_extensions as ext
+from cmds.rand import Rand
+import resources.dsbot_extensions as ext
 import discord
 import requests
 import asyncio

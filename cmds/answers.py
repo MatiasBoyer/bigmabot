@@ -1,6 +1,6 @@
 import discord
-import guildsave
-import dsbot_extensions as ext
+import resources.guildsave as guildsave
+import resources.dsbot_extensions as ext
 from discord.ext import commands
 from discord.ext.commands.core import has_permissions
 

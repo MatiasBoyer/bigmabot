@@ -1,1 +1,7 @@
 token.txt
+config.ini
+geckodriver.log
+uploads/
+temp/
+guilds/
+!guilds/guilddefaults.json

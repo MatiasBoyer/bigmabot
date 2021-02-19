@@ -3,11 +3,12 @@ import discord
 import traceback
 import time
 import json
-import emojilist
-import guildsave
+import resources.emojilist as emojilist
+import resources.guildsave as guildsave
+import configparser
 
 from discord.ext.commands.errors import CommandNotFound
-import dsbot_extensions as ext
+import resources.dsbot_extensions as ext
 from playsound import playsound
 from termcolor import colored
 from discord.ext import commands
@@ -15,18 +16,21 @@ from discord.ext.commands import bot
 from discord.ext.commands.core import command, has_permissions
 
 # COMMANDS IMPORT
-from com.rand import Rand
-from com.randomcommands import RandomCommands
-from com.file import File
-from com.answers import Answers
-from com.adminonly import AdminOnly
-from com.images import Images
-from com.memes import Memes
+from cmds.rand import Rand
+from cmds.randomcommands import RandomCommands
+from cmds.file import File
+from cmds.answers import Answers
+from cmds.adminonly import AdminOnly
+from cmds.images import Images
+import cmds.memes as memes
 # endregion
 
 # region USEFUL VARIABLES
-token = ""
 mediatypes = [".png", ".jpg", ".jpeg", ".mp4", ".mp3", ".gif"]
+
+token = ""
+cbenabled = False
+imgflipData = memes.imgflipData(False, "", "")
 # endregion
 
 # region BOT INITIALIZATION
@@ -35,15 +39,10 @@ bot = commands.Bot(command_prefix="$")
 bot.add_cog(Rand())
 bot.add_cog(AdminOnly(bot))
 bot.add_cog(File())
-bot.add_cog(RandomCommands(bot))
+bot.add_cog(RandomCommands(bot, cbenabled))
 bot.add_cog(Answers())
 bot.add_cog(Images())
-bot.add_cog(Memes())
-
-
-async def sendToOwner(msg):
-    u = await bot.fetch_user(301493792366657537)
-    await u.send(msg)
+bot.add_cog(memes.Memes(imgflipData))
 
 
 @bot.event
@@ -106,8 +105,6 @@ async def on_message(message):
             if ra.returnType() == "EMOJI":
                 await message.add_reaction(a)
                 return
-            await sendToOwner(
-                f"[!] Error! Message type '{ra.returnType()}' not recognized.")
 
 
 @bot.event
@@ -115,7 +112,23 @@ async def on_command_error(ctx, error):
     await ctx.send(error)
     raise error
 
-token = open("token", 'r').readline()
+# endregion
+
+# region BOT CONFIG
+config = configparser.ConfigParser()
+config.read("config.ini")
+
+# IMGFLIP
+imgflipData.isEnabled = config["IMGFLIP"]["Enable"] == "True"
+imgflipData.username = config["IMGFLIP"]["Username"]
+imgflipData.password = config["IMGFLIP"]["Password"]
+
+# CLEVERBOT
+cbenabled = config["CLEVERBOT"]["Enable"] == "True"
+
+# TOKEN
+token = config["BOTCONF"]["Token"]
+
+# endregion
 
 bot.run(token.strip())
-# endregion

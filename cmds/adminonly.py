@@ -1,8 +1,8 @@
 from asyncio.subprocess import STDOUT
 import discord
-import emojilist
+import resources.emojilist as emojilist
 from discord import client
-import dsbot_extensions as ext
+import resources.dsbot_extensions as ext
 from discord.ext import commands
 #from discord.ext.commands import bot
 from discord.ext.commands.core import has_permissions

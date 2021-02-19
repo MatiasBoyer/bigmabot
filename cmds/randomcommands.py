@@ -1,4 +1,4 @@
-import dsbot_extensions as ext
+import resources.dsbot_extensions as ext
 import asyncio
 import discord
 from playsound import playsound
@@ -10,24 +10,21 @@ from cleverbot_free.cbapi import CleverBot
 
 class RandomCommands(commands.Cog):
 
+    cbenabled = False
     cb = CleverBot()
     bot = None
 
-    def __init__(self, _bot):
+    def __init__(self, _bot, cbenabled):
         self.cb = CleverBot()
-        self.cb.init()
         self.bot = _bot
-
-    @commands.command(name="sendtobigma")
-    async def sendtobigma(self, ctx, msg):
-        u = await self.bot.fetch_user(301493792366657537)
-        await u.send(msg)
-        playsound("./uploads/alarm.mp3")
-        await ctx.send(f"Ya le mande el dm a bigma y le puse un sonido en la pc.")
+        self.cbenabled = cbenabled
+        if cbenabled == True:
+            self.cb.init()
 
     @commands.command(name="cleverbot.ask", brief="DISABLED!")
     async def cleverbot_ask(self, ctx, msg):
-        await ctx.send("Command disabled")
-        return
+        if self.cbenabled == False:
+            await ctx.send("bot has this command disabled!")
+            return
         await ctx.send(self.cb.getResponse(f"cleverbot says: {msg}"))
         #cb_response = cb.single_exchange(msg)
