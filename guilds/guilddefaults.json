@@ -4,7 +4,17 @@
     "AnswerCooldown": 1,
     "HasPermissionToFileCommands": false,
     "MaxStorageBytes": 1000000.0,
-    "enableErrorLogging": true,
+    "userConfig": {
+        "switches": {
+            "errorlogging": true,
+            "send": true,
+            "answers": true,
+            "file": true,
+            "img": true,
+            "memes": true,
+            "rand": true
+        }
+    },
     "AnswerList": [
         {
             "NAME": "DEFAULT",

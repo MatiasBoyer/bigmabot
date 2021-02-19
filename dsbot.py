@@ -62,11 +62,22 @@ async def on_message(message):
 
     author_colored = colored((message.author), "red")
     print(f"{author_colored} -> {message.content}")
+
+    # CHECK IF GUILD PERMITS THE COMMAND
+    cmd_category = message.content[1:].split('.')
+
+    if cmd_category[0] in guildsettings["userConfig"]["switches"]:
+        isenabled = guildsettings["userConfig"]["switches"][cmd_category[0]]
+
+        if isenabled == False:
+            await message.channel.send("Guild has this command disabled!")
+            return
+
     await bot.process_commands(message)
 
     # RANDOM_ANSWERS TEST!
     if int(guildsettings["LastCheckTime"]) >= time.time() - guildsettings["AnswerCooldown"]:
-        #print("wordchecking is on cooldown!")
+        # print("wordchecking is on cooldown!")
         return
 
     if len(message.content) <= 1:
@@ -90,24 +101,24 @@ async def on_message(message):
         if a != None:
             a = emojilist.replaceEmojiInString(a)
 
-            if ra.returnType() == "TEXT":
+            if ra.returnType().upper() == "TEXT":
                 await message.channel.send(a.format(message.author.mention))
                 return
-            if ra.returnType() == "MEDIA":
+            if ra.returnType().upper() == "MEDIA":
                 await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/uploads/{a}"))
                 return
-            if ra.returnType() == "TEXTNMEDIA":
+            if ra.returnType().upper() == "TEXTNMEDIA":
                 if ext.isAdmitedMediaType(mediatypes, a):
                     await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/uploads/{a}"))
                 else:
                     await message.channel.send(a.format(author=message.author.mention))
                 return
-            if ra.returnType() == "REACTION":
+            if ra.returnType().upper() == "REACTION":
                 await message.add_reaction(a)
                 return
 
 
-@bot.event
+@ bot.event
 async def on_command_error(ctx, error):
     await ctx.send(error)
     raise error

@@ -8,6 +8,8 @@ from discord.ext.commands.core import has_permissions
 
 class Answers(commands.Cog):
 
+    typesoflist = ["TEXT", "TEXTNMEDIA", "MEDIA", "REACTION"]
+
     @commands.command(name="answers.getlists")
     async def answers_getlists(self, ctx):
         guildconf = guildsave.returnGuildJson(

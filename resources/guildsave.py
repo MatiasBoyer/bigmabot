@@ -49,7 +49,7 @@ def returnGuildJson(guildId):
         for x in defaultsjson:
             filejson.setdefault(x, defaultsjson[x])
 
-        # print(filedata)
+        saveDataToJson(guildId, filejson)
         return filejson
 
     return createNewGuildJson(guildId)
