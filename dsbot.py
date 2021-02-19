@@ -9,11 +9,14 @@ from termcolor import colored
 from discord.ext import commands
 from discord.ext.commands import bot
 from discord.ext.commands.core import command, has_permissions
+
+# COMMANDS
 from com.rand import Rand
 from com.randomcommands import RandomCommands
 from com.file import File
 from com.answers import Answers
 from com.adminonly import AdminOnly
+from com.images import Images
 # endregion
 
 # region USEFUL VARIABLES
@@ -50,10 +53,11 @@ def SAVEJSON():
 bot = commands.Bot(command_prefix="$")
 
 bot.add_cog(Rand())
-bot.add_cog(AdminOnly())
+bot.add_cog(AdminOnly(bot))
 bot.add_cog(File())
-bot.add_cog(RandomCommands())
+bot.add_cog(RandomCommands(bot))
 bot.add_cog(Answers(random_answers))
+bot.add_cog(Images())
 
 
 async def sendToOwner(msg):
@@ -79,6 +83,9 @@ async def on_message(message):
     await bot.process_commands(message)
 
     # RANDOM_ANSWERS TEST!
+    if len(message.content) <= 2:
+        return
+
     if message.content[0] == '$':
         return
 
