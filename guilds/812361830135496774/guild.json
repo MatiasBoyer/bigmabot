@@ -1,0 +1,19 @@
+{
+    "WordCheckCooldown": 3,
+    "LastCheckTime": 0,
+    "AnswerCooldown": 1,
+    "HasPermissionToFileCommands": false,
+    "MaxStorageBytes": 1e+6,
+    "AnswerList": [
+        {
+            "NAME": "Test",
+            "TYPE": "TEXT",
+            "WORDS": [
+                "test.123"
+            ],
+            "ANSWERS": [
+                "123.test"
+            ]
+        }
+    ]
+}

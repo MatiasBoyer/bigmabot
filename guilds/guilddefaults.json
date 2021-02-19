@@ -1,0 +1,15 @@
+{
+    "WordCheckCooldown": 3,
+    "LastCheckTime": 0,
+    "AnswerCooldown": 1,
+    "HasPermissionToFileCommands": false,
+    "MaxStorageBytes": 1e+6,
+    "AnswerList": [
+        {
+            "NAME": "Default",
+            "TYPE": "TEXT",
+            "WORDS": [],
+            "ANSWERS": []
+        }
+    ]
+}
