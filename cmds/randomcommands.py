@@ -28,3 +28,7 @@ class RandomCommands(commands.Cog):
             return
         await ctx.send(self.cb.getResponse(f"cleverbot says: {msg}"))
         #cb_response = cb.single_exchange(msg)
+
+    @commands.command(name="gitlink")
+    async def gitlink(self, ctx):
+        await ctx.send("https://github.com/MatiasBoyer/bigmabot")

@@ -49,7 +49,7 @@ bot.add_cog(memes.Memes(imgflipData))
 async def on_ready():
     print("on_ready() called!")
     # await sendToOwner("on_ready() called!")
-    await bot.change_presence(activity=discord.Streaming(name="TESTING! NO FUNCIONO", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+    await bot.change_presence(activity=discord.Streaming(name="indev - $gitlink", url="https://github.com/MatiasBoyer/bigmabot"))
 
 
 @bot.event
@@ -94,11 +94,11 @@ async def on_message(message):
                 await message.channel.send(a.format(message.author.mention))
                 return
             if ra.returnType() == "MEDIA":
-                await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/a"))
+                await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/{a}"))
                 return
             if ra.returnType() == "TEXTNMEDIA":
                 if ext.isAdmitedMediaType(mediatypes, a):
-                    await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/a"))
+                    await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/{a}"))
                 else:
                     await message.channel.send(a.format(author=message.author.mention))
                 return

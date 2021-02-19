@@ -140,3 +140,4 @@ cython_debug/
 # custom
 temp/
 geckodriver.log
+config.ini

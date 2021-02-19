@@ -3,6 +3,12 @@ import time
 import os
 from pathlib import Path
 
+defaultsjson = None
+defaultsdata = None
+with open("./guilds/guilddefaults.json", 'r') as f:
+    defaultsdata = f.read()
+defaultsjson = json.loads(defaultsdata)
+
 
 def createNewGuildJson(guildId):
     Path(f"./guilds/{guildId}").mkdir(parents=True, exist_ok=True)
@@ -35,11 +41,16 @@ def returnGuildJson(guildId):
 
     if os.path.exists(path):
         filedata = None
+        filejson = None
         with open(path, 'r') as file:
             filedata = file.read()
+        filejson = json.loads(filedata)
+
+        for x in defaultsjson:
+            filejson.setdefault(x, defaultsjson[x])
 
         # print(filedata)
-        return json.loads(filedata)
+        return filejson
 
     return createNewGuildJson(guildId)
 
