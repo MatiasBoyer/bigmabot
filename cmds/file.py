@@ -6,6 +6,7 @@ import resources.guildsave as guildsave
 import resources.dsbot_extensions as ext
 from discord.ext import commands
 from discord.ext.commands.core import has_permissions
+from pathlib import Path
 
 
 class File(commands.Cog):
@@ -22,7 +23,7 @@ class File(commands.Cog):
         await ctx.send("Trying to download file in host...")
 
         r = requests.get(ctx.message.attachments[0].url, allow_redirects=True)
-        fname = "./uploads/" + ctx.message.attachments[0].filename
+        fname = f"./guilds/{ctx.message.guild.id}/{ctx.message.attachments[0].filename}"
 
         await asyncio.sleep(3)
         open(fname, "wb").write(r.content)
@@ -42,7 +43,7 @@ class File(commands.Cog):
             await ctx.send("This guild has no permission to file commands!")
             return
 
-        path = "./uploads/" + fileName
+        path = f"./guilds/{ctx.message.guild.id}/{fileName}"
         if os.path.exists(path) == False:
             await ctx.send(f"os.path.exists({path}) returned False! No file to download.")
             return
@@ -58,16 +59,17 @@ class File(commands.Cog):
             await ctx.send("This guild has no permission to file commands!")
             return
 
+        path = f"./guilds/{ctx.message.guild.id}/"
         onlyfiles = [f for f in os.listdir(
-            "./uploads/") if os.path.isfile(os.path.join("./uploads/", f))]
-        t = "\tFiles in ./uploads/\n"
+            path) if os.path.isfile(os.path.join(path, f))]
+        t = f"\tFiles in {path}\n"
         for x in onlyfiles:
-            t += f"{x}\t\t\t{(os.path.getsize('./uploads/' + x)/1e+6)} MBs\n"
+            t += f"{x}\t\t\t\t{(os.path.getsize(path + x)/1e+6)} MBs\n"
             # t += x + "\n"
         await ctx.send(f"`{t}`")
 
-    @commands.command(name="file.remove")
-    @has_permissions(manage_roles=True)
+    @ commands.command(name="file.remove")
+    @ has_permissions(manage_roles=True)
     async def file_remove(self, ctx, filename):
         guildconf = guildsave.returnGuildJson(
             str(ctx.message.guild.id))
@@ -76,5 +78,6 @@ class File(commands.Cog):
             await ctx.send("This guild has no permission to file commands!")
             return
 
-        os.remove("./uploads/" + filename)
-        await ctx.send("os.remove() called!")
+        path = f"./guilds/{ctx.message.guild.id}/"
+        os.remove(path + filename)
+        await ctx.send("removefile called!")

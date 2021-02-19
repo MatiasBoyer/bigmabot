@@ -1,10 +1,14 @@
 import json
 import time
 import os
+from pathlib import Path
 
 
 def createNewGuildJson(guildId):
-    path = f"./guilds/{guildId}.json"
+    Path(f"./guilds/{guildId}").mkdir(parents=True, exist_ok=True)
+    Path(f"./guilds/{guildId}/uploads").mkdir(parents=True, exist_ok=True)
+
+    path = f"./guilds/{guildId}/guild.json"
     defaultspath = "./guilds/guilddefaults.json"
 
     defaultdata = None
@@ -21,13 +25,13 @@ def createNewGuildJson(guildId):
 
 
 def saveDataToJson(guildId, data):
-    path = f"./guilds/{guildId}.json"
+    path = f"./guilds/{guildId}/guild.json"
     with open(path, 'w') as f:
         f.write(json.dumps(data))
 
 
 def returnGuildJson(guildId):
-    path = f"./guilds/{guildId}.json"
+    path = f"./guilds/{guildId}/guild.json"
 
     if os.path.exists(path):
         filedata = None
