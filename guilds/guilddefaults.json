@@ -1,0 +1,16 @@
+{
+    "WordCheckCooldown": 3,
+    "LastCheckTime": 1613770686.690635,
+    "AnswerCooldown": 1,
+    "HasPermissionToFileCommands": false,
+    "MaxStorageBytes": 1000000.0,
+    "enableErrorLogging": true,
+    "AnswerList": [
+        {
+            "NAME": "DEFAULT",
+            "TYPE": "TEXTNMEDIA",
+            "WORDS": [],
+            "ANSWERS": []
+        }
+    ]
+}
