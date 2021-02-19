@@ -30,9 +30,3 @@ class AdminOnly(commands.Cog):
         msg = emojilist.replaceEmojiInString(msg)
         u = await self.bot.fetch_user(user_id=int(id))
         await u.send(msg)
-
-    @ commands.command(name="eval")
-    @ has_permissions(manage_roles=True)
-    async def evaluate(self, ctx, msg):
-        eval_result = eval(msg)
-        await ctx.send(eval_result)

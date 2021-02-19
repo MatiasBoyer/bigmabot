@@ -1,8 +1,9 @@
 import discord
 import asyncio
-import requests
 import os
 import math
+import aiohttp
+import aiofiles
 import resources.guildsave as guildsave
 import resources.dsbot_extensions as ext
 from discord.ext import commands
@@ -26,6 +27,9 @@ class File(commands.Cog):
             return
 
         path = f"./guilds/{ctx.message.guild.id}/uploads/"
+        if os.path.exists(path) == False:
+            os.mkdir(path)
+
         onlyfiles = [f for f in os.listdir(
             path) if os.path.isfile(os.path.join(path, f))]
 
@@ -43,17 +47,31 @@ class File(commands.Cog):
         # await ctx.send(f"ATTACHMENTS:{ctx.message.attachments}")
         await ctx.send("Trying to download file in host...")
 
-        r = requests.get(ctx.message.attachments[0].url, allow_redirects=True)
-        fname = f"./guilds/{ctx.message.guild.id}/uploads/{ctx.message.attachments[0].filename}"
+        #r = requests.get(ctx.message.attachments[0].url, allow_redirects=True)
+        #fname = f"./guilds/{ctx.message.guild.id}/uploads/{ctx.message.attachments[0].filename}"
 
-        await asyncio.sleep(3)
-        open(fname, "wb").write(r.content)
-        await asyncio.sleep(1)
+        # await asyncio.sleep(3)
+        #open(fname, "wb").write(r.content)
+        # await asyncio.sleep(1)
+
+        url = ctx.message.attachments[0].url
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status != 200:
+                    await ctx.send("url status != 200")
+                    return
+
+                fname = f"{path}{ctx.message.attachments[0].filename}"
+
+                f = await aiofiles.open(fname, mode='wb')
+                await f.write(await resp.read())
+                await f.close()
 
         if os.path.exists(fname):
-            await ctx.send("os.path.exists returned True! (file downloaded successfully)")
+            await ctx.send("File downloaded successfully!")
         else:
-            await ctx.send("os.path.exists returned False! Wait a few more seconds and check the directory!")
+            await ctx.send("Something went wrong downloading your file!")
 
     @commands.command(name="file.download")
     async def file_download(self, ctx, fileName):
@@ -87,13 +105,29 @@ class File(commands.Cog):
 
         totalstoragebytes = 0
         t = f"\tFiles in {path}\n"
+
+        em = discord.Embed(
+            title=f"Files in {path}",
+            description=f"Total storage used: {truncate(totalstoragebytes/1e+6,2)} MBs/{truncate(maxfilebytes/1e+6,2)} MBs")
+
+        fdict = {}
         for x in onlyfiles:
             size = os.path.getsize(path + x)
             totalstoragebytes += size
-            t += f"{x}\t\t\t\t\t{truncate(size/1e+6,1)} MBs\n"
-            # t += x + "\n"
-        t += f"TOTAL STORAGE USED:\t{truncate(totalstoragebytes/1e+6,1)} MBs/{truncate(maxfilebytes/1e+6,1)} MBs\n"
-        await ctx.send(f"`{t}`")
+
+            sizeinmb = truncate(size/1e+6, 2)
+            fdict[x] = str(sizeinmb) + " MBs"
+
+        L = ""
+        R = ""
+        for x in fdict:
+            L += f"{x}\n"
+            R += f"{fdict[x]}\n"
+
+        em.add_field(name="File name", value=L, inline=True)
+        em.add_field(name="Disk usage", value=R, inline=True)
+
+        await ctx.send(embed=em)
 
     @ commands.command(name="file.remove")
     @ has_permissions(manage_roles=True)
@@ -107,4 +141,8 @@ class File(commands.Cog):
 
         path = f"./guilds/{ctx.message.guild.id}/uploads/"
         os.remove(path + filename)
-        await ctx.send("removefile called!")
+
+        if os.path.exists(path + filename) == False:
+            await ctx.send("Removed successfuly!")
+        else:
+            await ctx.send("Failed to remove file!")
