@@ -25,17 +25,9 @@ class RandomCommands(commands.Cog):
         playsound("./uploads/alarm.mp3")
         await ctx.send(f"Ya le mande el dm a bigma y le puse un sonido en la pc.")
 
-    @commands.command()
-    async def betterhelp(self, ctx):
-        h = ""
-        with open("betterhelp.txt", 'r') as file:
-            h = file.read()
-        # await ctx.send(str(h))
-        await ctx.send(f"`{str(h)}`")
-
-    @commands.command(name="cleverbot.ask")
+    @commands.command(name="cleverbot.ask", brief="DISABLED!")
     async def cleverbot_ask(self, ctx, msg):
-        # await ctx.send("command disabled")
-        # return
+        await ctx.send("Command disabled")
+        return
         await ctx.send(self.cb.getResponse(f"cleverbot says: {msg}"))
         #cb_response = cb.single_exchange(msg)

@@ -14,7 +14,7 @@ from discord.ext import commands
 from discord.ext.commands import bot
 from discord.ext.commands.core import command, has_permissions
 
-# COMMANDS
+# COMMANDS IMPORT
 from com.rand import Rand
 from com.randomcommands import RandomCommands
 from com.file import File
@@ -29,59 +29,16 @@ token = ""
 mediatypes = [".png", ".jpg", ".jpeg", ".mp4", ".mp3", ".gif"]
 # endregion
 
-# region SAVING/LOADING HELPERS
-
-
-def LOADJSON():
-    print(colored("DEPRECATED", 'red'))
-    return
-    # BOTCONFIG
-    botconf = ext.returndatafromfile("./config/botconfig.json")
-    wordcheckingcooldown = botconf["WordCheckCooldown"]
-
-    # RANDOM_ANSWERS
-    random_answers.clear()
-    answerlist = ext.returndatafromfile("./config/answerlist.json")
-    for x in answerlist["LIST"]:
-        a = ext.word_answering_random(
-            x["NAME"], x["TYPE"], x["WORDS"], x["ANSWERS"])
-        random_answers.append(a)
-
-
-def SAVEJSON():
-    print(colored("DEPRECATED", 'red'))
-    return
-
-    # BOTCONFIG
-    botconfdict = {
-        "WordCheckCooldown": wordcheckingcooldown
-    }
-    botconfjson = json.dumps(botconfdict)
-    ext.savedatatofile("./config/botconfig.json", botconfjson)
-
-    # RANDOM_ANSWERS
-    answerstojson = []
-    j = "{ " + "\"LIST\": "
-
-    for x in random_answers:
-        answerstojson.append(x.toJson())
-    atojson = j + ext.arrayToStrWithoutQuotationMarks(answerstojson) + "]}"
-    # print(atojson)
-    ext.savedatatofile("./config/answerlist.json", atojson)
-
-
-# endregion
-
 # region BOT INITIALIZATION
 bot = commands.Bot(command_prefix="$")
 
-# bot.add_cog(Rand())
-# bot.add_cog(AdminOnly(bot))
-# bot.add_cog(File())
-# bot.add_cog(RandomCommands(bot))
+bot.add_cog(Rand())
+bot.add_cog(AdminOnly(bot))
+bot.add_cog(File())
+bot.add_cog(RandomCommands(bot))
 bot.add_cog(Answers())
-# bot.add_cog(Images())
-# bot.add_cog(Memes())
+bot.add_cog(Images())
+bot.add_cog(Memes())
 
 
 async def sendToOwner(msg):
@@ -159,7 +116,6 @@ async def on_command_error(ctx, error):
     raise error
 
 token = open("token", 'r').readline()
-LOADJSON()
 
 bot.run(token.strip())
 # endregion
