@@ -94,15 +94,15 @@ async def on_message(message):
                 await message.channel.send(a.format(message.author.mention))
                 return
             if ra.returnType() == "MEDIA":
-                await message.channel.send(file=discord.File("./uploads/" + a))
+                await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/a"))
                 return
             if ra.returnType() == "TEXTNMEDIA":
                 if ext.isAdmitedMediaType(mediatypes, a):
-                    await message.channel.send(file=discord.File("./uploads/" + a))
+                    await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/a"))
                 else:
                     await message.channel.send(a.format(author=message.author.mention))
                 return
-            if ra.returnType() == "EMOJI":
+            if ra.returnType() == "REACTION":
                 await message.add_reaction(a)
                 return
 
