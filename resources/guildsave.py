@@ -3,6 +3,12 @@ import time
 import os
 from pathlib import Path
 
+defaultsjson = None
+defaultsdata = None
+with open("./guilds/guilddefaults.json", 'r') as f:
+    defaultsdata = f.read()
+defaultsjson = json.loads(defaultsdata)
+
 
 def createNewGuildJson(guildId):
     Path(f"./guilds/{guildId}").mkdir(parents=True, exist_ok=True)
@@ -26,20 +32,35 @@ def createNewGuildJson(guildId):
 
 def saveDataToJson(guildId, data):
     path = f"./guilds/{guildId}/guild.json"
-    with open(path, 'w') as f:
-        f.write(json.dumps(data))
+    try:
+        jdump = json.dumps(data, ensure_ascii=False)
+        with open(path, 'w', encoding="utf-16") as f:
+            f.write(jdump)
+    except Exception:
+        print("Error saving!!!")
 
 
-def returnGuildJson(guildId):
+async def returnGuildJson(ctx, guildId):
     path = f"./guilds/{guildId}/guild.json"
 
     if os.path.exists(path):
         filedata = None
-        with open(path, 'r') as file:
+        filejson = None
+        with open(path, 'r', encoding="utf-16") as file:
             filedata = file.read()
 
-        # print(filedata)
-        return json.loads(filedata)
+        try:
+            filejson = json.loads(filedata)
+        except ValueError as a:
+            msg = f"Exception whilst returning the json!: {a}"
+            await ctx.send(msg)
+            return
+
+        for x in defaultsjson:
+            filejson.setdefault(x, defaultsjson[x])
+
+        saveDataToJson(guildId, filejson)
+        return filejson
 
     return createNewGuildJson(guildId)
 

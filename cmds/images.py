@@ -7,6 +7,7 @@ import aiohttp
 import PIL
 import numpy
 import random
+import os
 from PIL import Image
 from PIL import ImageOps
 from discord.ext import commands
@@ -73,6 +74,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.resize")
     async def image_resize(self, ctx, *args):
@@ -105,6 +107,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.rotate")
     async def image_rotate(self, ctx, *args):
@@ -129,6 +132,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.flip")
     async def image_flip(self, ctx, *args):
@@ -147,6 +151,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.flop")
     async def image_flop(self, ctx, *args):
@@ -165,6 +170,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.transparentize")
     async def image_transparentize(self, ctx, *args):
@@ -194,36 +200,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
-
-    @commands.command(name="img.transpose")
-    async def image_transpose(self, ctx, *args):
-        img_name = await self.trygetImage(ctx, *args)
-        if img_name == None:
-            img_name = self.lastImgName
-            return
-
-        self.lastImgName = img_name
-
-        if img_name == None:
-            return
-
-        with Image(filename=img_name) as img:
-            img.transpose()
-            img.save(filename=img_name)
-
-        await ctx.send(file=discord.File(img_name))
-
-    @commands.command(name="img.transverse")
-    async def image_transverse(self, ctx, *args):
-        img_name = await self.trygetImage(ctx, *args)
-        if img_name == None:
-            return
-
-        with Image(filename=img_name) as img:
-            img.transverse()
-            img.save(filename=img_name)
-
-        await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.waaw")
     async def image_waaw(self, ctx, *args):
@@ -259,3 +236,112 @@ class Images(commands.Cog):
         imgs_comb.save(fname, "PNG")
 
         await ctx.send(file=discord.File(fname))
+        os.remove(img_name)
+
+    @commands.command(name="img.haah")
+    async def image_haah(self, ctx, *args):
+        img_name = await self.trygetImage(ctx, *args)
+        if img_name == None:
+            return
+
+        f = BytesIO()
+        f2 = BytesIO()
+        with Image(filename=img_name) as img:
+            h1 = img.clone()
+            width = int(img.width/2) if int(img.width/2) > 0 else 1
+            h1.crop(width=width, height=int(img.height), gravity="east")
+            h2 = h1.clone()
+            h2.rotate(degree=180)
+            h2.flip()
+
+            h1.save(file=f)
+            h2.save(file=f2)
+
+        f.seek(0)
+        f2.seek(0)
+
+        im_list = [f2, f]
+        imgs = [PIL.ImageOps.mirror(PIL.Image.open(
+            i).convert('RGBA')) for i in im_list]
+        min_shape = sorted([(numpy.sum(i.size), i.size) for i in imgs])[0][1]
+        imgs_comb = numpy.hstack(
+            (numpy.asarray(i.resize(min_shape)) for i in imgs))
+        imgs_comb = PIL.Image.fromarray(imgs_comb)
+
+        fname = f"./temp/{str(random.randrange(0, 10000))}.png"
+        imgs_comb.save(fname, "PNG")
+
+        await ctx.send(file=discord.File(fname))
+        os.remove(img_name)
+
+    @commands.command(name="img.woow")
+    async def image_woow(self, ctx, *args):
+        img_name = await self.trygetImage(ctx, *args)
+        if img_name == None:
+            return
+
+        f = BytesIO()
+        f2 = BytesIO()
+        with Image(filename=img_name) as img:
+            h1 = img.clone()
+            width = int(img.width) if int(img.width) > 0 else 1
+            h1.crop(width=width, height=int(img.height/2), gravity="north")
+            h2 = h1.clone()
+            h2.rotate(degree=180)
+            h2.flop()
+
+            h1.save(file=f)
+            h2.save(file=f2)
+
+        f.seek(0)
+        f2.seek(0)
+
+        im_list = [f2, f]
+        imgs = [PIL.ImageOps.mirror(PIL.Image.open(
+            i).convert('RGBA')) for i in im_list]
+        min_shape = sorted([(numpy.sum(i.size), i.size) for i in imgs])[0][1]
+        imgs_comb = numpy.vstack(
+            (numpy.asarray(i.resize(min_shape)) for i in imgs))
+        imgs_comb = PIL.Image.fromarray(imgs_comb)
+
+        fname = f"./temp/{str(random.randrange(0, 10000))}.png"
+        imgs_comb.save(fname, "PNG")
+
+        await ctx.send(file=discord.File(fname))
+        os.remove(img_name)
+
+    @commands.command(name="img.hooh")
+    async def image_hooh(self, ctx, *args):
+        img_name = await self.trygetImage(ctx, *args)
+        if img_name == None:
+            return
+
+        f = BytesIO()
+        f2 = BytesIO()
+        with Image(filename=img_name) as img:
+            h1 = img.clone()
+            width = int(img.width) if int(img.width) > 0 else 1
+            h1.crop(width=width, height=int(img.height/2), gravity="south")
+            h2 = h1.clone()
+            h2.rotate(degree=180)
+            h2.flop()
+
+            h1.save(file=f)
+            h2.save(file=f2)
+
+        f.seek(0)
+        f2.seek(0)
+
+        im_list = [f2, f]
+        imgs = [PIL.ImageOps.mirror(PIL.Image.open(
+            i).convert('RGBA')) for i in im_list]
+        min_shape = sorted([(numpy.sum(i.size), i.size) for i in imgs])[0][1]
+        imgs_comb = numpy.vstack(
+            (numpy.asarray(i.resize(min_shape)) for i in imgs))
+        imgs_comb = PIL.Image.fromarray(imgs_comb)
+
+        fname = f"./temp/{str(random.randrange(0, 10000))}.png"
+        imgs_comb.save(fname, "PNG")
+
+        await ctx.send(file=discord.File(fname))
+        os.remove(img_name)

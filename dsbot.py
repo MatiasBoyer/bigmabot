@@ -3,7 +3,6 @@ import discord
 import traceback
 import time
 import json
-import resources.emojilist as emojilist
 import resources.guildsave as guildsave
 import configparser
 
@@ -49,7 +48,7 @@ bot.add_cog(memes.Memes(imgflipData))
 async def on_ready():
     print("on_ready() called!")
     # await sendToOwner("on_ready() called!")
-    await bot.change_presence(activity=discord.Streaming(name="TESTING! NO FUNCIONO", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+    await bot.change_presence(activity=discord.Streaming(name="indev - $gitlink", url="https://github.com/MatiasBoyer/bigmabot"))
 
 
 @bot.event
@@ -58,15 +57,27 @@ async def on_message(message):
         return
 
     # COMMAND HANDLING
-    guildsettings = guildsave.returnGuildJson(str(message.guild.id))
+    guildsettings = await guildsave.returnGuildJson(
+        message.channel, str(message.guild.id))
 
     author_colored = colored((message.author), "red")
     print(f"{author_colored} -> {message.content}")
+
+    # CHECK IF GUILD PERMITS THE COMMAND
+    cmd_category = message.content[1:].split('.')
+
+    if cmd_category[0] in guildsettings["userConfig"]["switches"]:
+        isenabled = guildsettings["userConfig"]["switches"][cmd_category[0]]
+
+        if isenabled == False:
+            await message.channel.send("Guild has this command disabled!")
+            return
+
     await bot.process_commands(message)
 
     # RANDOM_ANSWERS TEST!
     if int(guildsettings["LastCheckTime"]) >= time.time() - guildsettings["AnswerCooldown"]:
-        #print("wordchecking is on cooldown!")
+        # print("wordchecking is on cooldown!")
         return
 
     if len(message.content) <= 1:
@@ -87,28 +98,38 @@ async def on_message(message):
 
     for ra in random_answers:
         a = ra.checkword(message.content)
-        if a != None:
-            a = emojilist.replaceEmojiInString(a)
 
-            if ra.returnType() == "TEXT":
+        if a != None:
+            # a = (a.decode("raw_unicode_escape").encode(
+            # 'utf-16', 'surrogatepass').decode('utf-16'))
+            #a = emojilist.replaceEmojiInString(a)
+
+            if ra.returnType().upper() == "TEXT":
                 await message.channel.send(a.format(message.author.mention))
                 return
-            if ra.returnType() == "MEDIA":
-                await message.channel.send(file=discord.File("./uploads/" + a))
+            if ra.returnType().upper() == "MEDIA":
+                await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/uploads/{a}"))
                 return
-            if ra.returnType() == "TEXTNMEDIA":
+            if ra.returnType().upper() == "TEXTNMEDIA":
                 if ext.isAdmitedMediaType(mediatypes, a):
-                    await message.channel.send(file=discord.File("./uploads/" + a))
+                    await message.channel.send(file=discord.File(f"./guilds/{message.guild.id}/uploads/{a}"))
                 else:
                     await message.channel.send(a.format(author=message.author.mention))
                 return
-            if ra.returnType() == "EMOJI":
+            if ra.returnType().upper() == "REACTION":
                 await message.add_reaction(a)
                 return
 
 
-@bot.event
+@ bot.event
 async def on_command_error(ctx, error):
+    guildsettings = await guildsave.returnGuildJson(
+        ctx, str(ctx.guild.id))
+
+    if guildsettings["userConfig"]["switches"]["errorlogging"]:
+        with open(f"./guilds/{ctx.guild.id}/logging.log", 'a') as f:
+            f.write(
+                f"*** ERROR ! ***\nCOMMAND USED: {ctx.message.content}\n{error}\n")
     await ctx.send(error)
     raise error
 

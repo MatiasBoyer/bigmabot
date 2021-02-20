@@ -1,4 +1,5 @@
 import discord
+import json
 import resources.guildsave as guildsave
 import resources.dsbot_extensions as ext
 from discord.ext import commands
@@ -7,10 +8,12 @@ from discord.ext.commands.core import has_permissions
 
 class Answers(commands.Cog):
 
-    @commands.command(name="answers.getlists")
+    typesoflist = ["TEXT", "TEXTNMEDIA", "MEDIA", "REACTION"]
+
+    @commands.command(name="answers.getlists", description="Gets all lists")
     async def answers_getlists(self, ctx):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
 
         rlists = ""
         for x in guildconf["AnswerList"]:
@@ -19,10 +22,10 @@ class Answers(commands.Cog):
         em.add_field(name="LISTNAME", value=rlists, inline=False)
         await ctx.send(embed=em)
 
-    @commands.command(name="answers.getlist")
+    @commands.command(name="answers.getlist", description="Gets all the parameters of the list given")
     async def answers_getlist(self, ctx, listName):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
 
         for x in guildconf["AnswerList"]:
             if x["NAME"].lower() == listName.lower():
@@ -47,17 +50,17 @@ class Answers(commands.Cog):
                     em.add_field(name="ANSWERS", value=a_val, inline=False)
                 else:
                     em.add_field(
-                        name="WORDS", value="There's no words", inline=False)
+                        name="ANSWERS", value="There's no answers", inline=False)
 
                 await ctx.send(embed=em)
                 return
         await ctx.send("The list doesn't exist!")
 
-    @commands.command(name="answers.addlist")
+    @commands.command(name="answers.createlist", description="ListTypes: TEXT | MEDIA | TEXTNMEDIA | REACTION\nTEXT is plain text, \nMEDIA is attachments\nTEXTNMEDIA is text + attachments\nREACTION will react to messages")
     @has_permissions(manage_roles=True)
-    async def answers_addlist(self, ctx, listName, listType):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+    async def answers_createlist(self, ctx, listName, listType):
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
 
         for x in guildconf["AnswerList"]:
             if x["NAME"].lower() == listName.lower():
@@ -73,15 +76,15 @@ class Answers(commands.Cog):
 
         await ctx.send("List created!")
 
-    @commands.command(name="answers.removelist")
+    @commands.command(name="answers.removelist", description="Removes a list permanently.")
     @has_permissions(manage_roles=True)
     async def answers_removelist(self, ctx, listName, usure):
         if usure != "I am very sure of this!":
             await ctx.send("In the parameter 'usure', please say 'I am very sure of this!'")
             return
 
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
 
         for i in range(0, len(guildconf["AnswerList"])):
             x = guildconf["AnswerList"][i]
@@ -94,14 +97,14 @@ class Answers(commands.Cog):
 
         await ctx.send("List doesnt exist!")
 
-    @commands.command(name="answers.removeat")
+    @commands.command(name="answers.removeat", description="Removes an element in a list. deleteWhat should be ANSWERS/WORDS, and index should be the index given in $answers.getlist")
     async def answers_removeat(self, ctx, listName, deleteWhat, index):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
         if deleteWhat.upper() == "WORDS":
             for x in guildconf["AnswerList"]:
                 if x["NAME"].lower() == listName.lower():
-                    del guildconf["AnswerList"]["WORDS"][int(index)]
+                    del x["WORDS"][int(index)]
                     guildsave.saveDataToJson(
                         str(ctx.message.guild.id), guildconf)
                     await ctx.send("Removed word!")
@@ -111,19 +114,19 @@ class Answers(commands.Cog):
         if deleteWhat.upper() == "ANSWERS":
             for x in guildconf["AnswerList"]:
                 if x["NAME"].lower() == listName.lower():
-                    del guildconf["AnswerList"]["ANSWERS"][int(index)]
+                    del x["ANSWERS"][int(index)]
                     guildsave.saveDataToJson(
                         str(ctx.message.guild.id), guildconf)
-                    await ctx.send("x.removeAnswer() called!")
+                    await ctx.send("Removed answer!")
                     return
             await ctx.send(f"List '{listName}' doesn't exist!")
             return
         await ctx.send(f"I don't know what '{deleteWhat}' is!")
 
-    @commands.command(name="answers.addanswertolist")
+    @commands.command(name="answers.addanswertolist", description="Adds an answer to the list given")
     async def answers_addanswertolist(self, ctx, listName, answer):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
         for x in guildconf["AnswerList"]:
             if x["NAME"].lower() == listName.lower():
                 val = {'a': answer}
@@ -134,10 +137,10 @@ class Answers(commands.Cog):
                 return
         await ctx.send("The list doesn't exist!")
 
-    @commands.command(name="answers.addwordtolist")
+    @commands.command(name="answers.addwordtolist", description="Adds a word to the list given")
     async def answers_addwordtolist(self, ctx, listName, word):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
         for x in guildconf["AnswerList"]:
             if x["NAME"].lower() == listName.lower():
                 val = {'a': word}
@@ -147,3 +150,21 @@ class Answers(commands.Cog):
                 await ctx.send("Added!")
                 return
         await ctx.send("The list doesn't exist!")
+
+    @commands.command(name="answers.addjson", description="indev - testing", enabled=False)
+    async def answers_addjson(self, ctx, *args):
+        try:
+            l = ' '.join(args)
+            jfile = json.loads(l)
+            guildconf = await guildsave.returnGuildJson(ctx,
+                                                        str(ctx.message.guild.id))
+
+            guildconf["AnswerList"].append(jfile)
+
+            guildsave.saveDataToJson(
+                str(ctx.message.guild.id), guildconf)
+
+            await ctx.send("Added json!")
+            return
+        except:
+            await ctx.send("Error parsing json!")

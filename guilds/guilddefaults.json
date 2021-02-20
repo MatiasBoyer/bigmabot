@@ -1,19 +1,26 @@
 {
     "WordCheckCooldown": 3,
-    "LastCheckTime": 0,
-    "AnswerCooldown": 1,
+    "LastCheckTime": 1613770686.690635,
+    "AnswerCooldown": 2.5,
     "HasPermissionToFileCommands": false,
-    "MaxStorageBytes": 1e+6,
+    "MaxStorageBytes": 1000000.0,
+    "userConfig": {
+        "switches": {
+            "errorlogging": true,
+            "send": true,
+            "answers": true,
+            "file": true,
+            "img": true,
+            "memes": true,
+            "rand": true
+        }
+    },
     "AnswerList": [
         {
-            "NAME": "Test",
-            "TYPE": "TEXT",
-            "WORDS": [
-                "test.123"
-            ],
-            "ANSWERS": [
-                "123.test"
-            ]
+            "NAME": "DEFAULT",
+            "TYPE": "TEXTNMEDIA",
+            "WORDS": [],
+            "ANSWERS": []
         }
     ]
 }
