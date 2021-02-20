@@ -45,8 +45,7 @@ class AdminOnly(commands.Cog):
     @commands.command(name="conf.list")
     @has_permissions(administrator=True)
     async def conf_list(self, ctx):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx, str(ctx.message.guild.id))
 
         finaltext = ""
         confdic = guildconf["userConfig"]
@@ -62,8 +61,7 @@ class AdminOnly(commands.Cog):
     @commands.command(name="conf.setparameter")
     @has_permissions(administrator=True)
     async def conf_setparameter(self, ctx, parameterName, parameterCategory, parameterValue):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx, str(ctx.message.guild.id))
 
         try:
             parameterName = parameterName.lower()

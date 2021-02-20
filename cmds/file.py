@@ -19,8 +19,8 @@ def truncate(number, digits) -> float:
 class File(commands.Cog):
     @commands.command(name="file.upload")
     async def file_upload(self, ctx):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
 
         if guildconf["HasPermissionToFileCommands"] == False:
             await ctx.send("This guild has no permission to file commands!")
@@ -75,8 +75,8 @@ class File(commands.Cog):
 
     @commands.command(name="file.download")
     async def file_download(self, ctx, fileName):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
 
         if guildconf["HasPermissionToFileCommands"] == False:
             await ctx.send("This guild has no permission to file commands!")
@@ -91,8 +91,8 @@ class File(commands.Cog):
 
     @commands.command(name="file.getdir")
     async def file_getdir(self, ctx):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
 
         if guildconf["HasPermissionToFileCommands"] == False:
             await ctx.send("This guild has no permission to file commands!")
@@ -132,8 +132,8 @@ class File(commands.Cog):
     @ commands.command(name="file.remove")
     @ has_permissions(manage_roles=True)
     async def file_remove(self, ctx, filename):
-        guildconf = guildsave.returnGuildJson(
-            str(ctx.message.guild.id))
+        guildconf = await guildsave.returnGuildJson(ctx,
+                                                    str(ctx.message.guild.id))
 
         if guildconf["HasPermissionToFileCommands"] == False:
             await ctx.send("This guild has no permission to file commands!")

@@ -58,7 +58,8 @@ async def on_message(message):
         return
 
     # COMMAND HANDLING
-    guildsettings = guildsave.returnGuildJson(str(message.guild.id))
+    guildsettings = await guildsave.returnGuildJson(
+        message.channel, str(message.guild.id))
 
     author_colored = colored((message.author), "red")
     print(f"{author_colored} -> {message.content}")
@@ -98,8 +99,11 @@ async def on_message(message):
 
     for ra in random_answers:
         a = ra.checkword(message.content)
+
         if a != None:
-            a = emojilist.replaceEmojiInString(a)
+            # a = (a.decode("raw_unicode_escape").encode(
+            # 'utf-16', 'surrogatepass').decode('utf-16'))
+            #a = emojilist.replaceEmojiInString(a)
 
             if ra.returnType().upper() == "TEXT":
                 await message.channel.send(a.format(message.author.mention))
