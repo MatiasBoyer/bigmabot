@@ -10,7 +10,7 @@ class Answers(commands.Cog):
 
     typesoflist = ["TEXT", "TEXTNMEDIA", "MEDIA", "REACTION"]
 
-    @commands.command(name="answers.getlists")
+    @commands.command(name="answers.getlists", description="Gets all lists")
     async def answers_getlists(self, ctx):
         guildconf = guildsave.returnGuildJson(
             str(ctx.message.guild.id))
@@ -22,7 +22,7 @@ class Answers(commands.Cog):
         em.add_field(name="LISTNAME", value=rlists, inline=False)
         await ctx.send(embed=em)
 
-    @commands.command(name="answers.getlist")
+    @commands.command(name="answers.getlist", description="Gets all the parameters of the list given")
     async def answers_getlist(self, ctx, listName):
         guildconf = guildsave.returnGuildJson(
             str(ctx.message.guild.id))
@@ -56,7 +56,7 @@ class Answers(commands.Cog):
                 return
         await ctx.send("The list doesn't exist!")
 
-    @commands.command(name="answers.createlist")
+    @commands.command(name="answers.createlist", description="ListTypes: TEXT | MEDIA | TEXTNMEDIA | REACTION\nTEXT is plain text, \nMEDIA is attachments\n TEXTNMEDIA is text + attachments\nREACTION will react to messages")
     @has_permissions(manage_roles=True)
     async def answers_createlist(self, ctx, listName, listType):
         guildconf = guildsave.returnGuildJson(
@@ -76,7 +76,7 @@ class Answers(commands.Cog):
 
         await ctx.send("List created!")
 
-    @commands.command(name="answers.removelist")
+    @commands.command(name="answers.removelist", description="Removes a list permanently.")
     @has_permissions(manage_roles=True)
     async def answers_removelist(self, ctx, listName, usure):
         if usure != "I am very sure of this!":
@@ -97,7 +97,7 @@ class Answers(commands.Cog):
 
         await ctx.send("List doesnt exist!")
 
-    @commands.command(name="answers.removeat")
+    @commands.command(name="answers.removeat", description="Removes an element in a list. deleteWhat should be ANSWERS/WORDS, and index should be the index given in $answers.getlist")
     async def answers_removeat(self, ctx, listName, deleteWhat, index):
         guildconf = guildsave.returnGuildJson(
             str(ctx.message.guild.id))
@@ -123,7 +123,7 @@ class Answers(commands.Cog):
             return
         await ctx.send(f"I don't know what '{deleteWhat}' is!")
 
-    @commands.command(name="answers.addanswertolist")
+    @commands.command(name="answers.addanswertolist", description="Adds an answer to the list given")
     async def answers_addanswertolist(self, ctx, listName, answer):
         guildconf = guildsave.returnGuildJson(
             str(ctx.message.guild.id))
@@ -137,7 +137,7 @@ class Answers(commands.Cog):
                 return
         await ctx.send("The list doesn't exist!")
 
-    @commands.command(name="answers.addwordtolist")
+    @commands.command(name="answers.addwordtolist", description="Adds a word to the list given")
     async def answers_addwordtolist(self, ctx, listName, word):
         guildconf = guildsave.returnGuildJson(
             str(ctx.message.guild.id))
@@ -151,7 +151,7 @@ class Answers(commands.Cog):
                 return
         await ctx.send("The list doesn't exist!")
 
-    @commands.command(name="answers.addjson", enabled=False)
+    @commands.command(name="answers.addjson", description="indev - testing", enabled=False)
     async def answers_addjson(self, ctx, *args):
         try:
             l = ' '.join(args)
