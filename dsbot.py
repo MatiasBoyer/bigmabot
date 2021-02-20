@@ -3,7 +3,6 @@ import discord
 import traceback
 import time
 import json
-import resources.emojilist as emojilist
 import resources.guildsave as guildsave
 import configparser
 
@@ -124,6 +123,13 @@ async def on_message(message):
 
 @ bot.event
 async def on_command_error(ctx, error):
+    guildsettings = await guildsave.returnGuildJson(
+        ctx, str(ctx.guild.id))
+
+    if guildsettings["userConfig"]["switches"]["errorlogging"]:
+        with open(f"./guilds/{ctx.guild.id}/logging.log", 'a') as f:
+            f.write(
+                f"*** ERROR ! ***\nCOMMAND USED: {ctx.message.content}\n{error}\n")
     await ctx.send(error)
     raise error
 

@@ -7,6 +7,7 @@ import aiohttp
 import PIL
 import numpy
 import random
+import os
 from PIL import Image
 from PIL import ImageOps
 from discord.ext import commands
@@ -73,6 +74,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.resize")
     async def image_resize(self, ctx, *args):
@@ -105,6 +107,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.rotate")
     async def image_rotate(self, ctx, *args):
@@ -129,6 +132,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.flip")
     async def image_flip(self, ctx, *args):
@@ -147,6 +151,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.flop")
     async def image_flop(self, ctx, *args):
@@ -165,6 +170,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.transparentize")
     async def image_transparentize(self, ctx, *args):
@@ -194,6 +200,7 @@ class Images(commands.Cog):
             img.save(filename=img_name)
 
         await ctx.send(file=discord.File(img_name))
+        os.remove(img_name)
 
     @commands.command(name="img.waaw")
     async def image_waaw(self, ctx, *args):
@@ -229,6 +236,7 @@ class Images(commands.Cog):
         imgs_comb.save(fname, "PNG")
 
         await ctx.send(file=discord.File(fname))
+        os.remove(img_name)
 
     @commands.command(name="img.haah")
     async def image_haah(self, ctx, *args):
@@ -264,6 +272,7 @@ class Images(commands.Cog):
         imgs_comb.save(fname, "PNG")
 
         await ctx.send(file=discord.File(fname))
+        os.remove(img_name)
 
     @commands.command(name="img.woow")
     async def image_woow(self, ctx, *args):
@@ -299,6 +308,7 @@ class Images(commands.Cog):
         imgs_comb.save(fname, "PNG")
 
         await ctx.send(file=discord.File(fname))
+        os.remove(img_name)
 
     @commands.command(name="img.hooh")
     async def image_hooh(self, ctx, *args):
@@ -334,3 +344,4 @@ class Images(commands.Cog):
         imgs_comb.save(fname, "PNG")
 
         await ctx.send(file=discord.File(fname))
+        os.remove(img_name)
