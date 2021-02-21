@@ -1,7 +1,7 @@
 from asyncio.subprocess import STDOUT
 from typing import final
 import discord
-import resources.emojilist as emojilist
+#import resources.emojilist as emojilist
 from discord import client
 import resources.dsbot_extensions as ext
 from discord.ext import commands
@@ -22,25 +22,25 @@ class AdminOnly(commands.Cog):
     @has_permissions(manage_roles=True)
     async def sendtochannel(self, ctx, id, *msg):
         # await ctx.send(id)
-        m = emojilist.replaceEmojiInString(' '.join(msg))
+        #m = emojilist.replaceEmojiInString(' '.join(msg))
         if '<' in id:
             id = id[2:]
             id = id[:len(id) - 1]
 
         channel = await self.bot.fetch_channel(channel_id=int(id))
-        await channel.send(m)
+        await channel.send(' '.join(msg))
 
     @ commands.command(name="send.touser")  # sendtochannel XXXXXXXX "MESSAGE"
     @ has_permissions(manage_roles=True)
     async def sendtouser(self, ctx, id, *msg):
-        m = emojilist.replaceEmojiInString(' '.join(msg))
+        #m = emojilist.replaceEmojiInString(' '.join(msg))
 
         if '<' in id:
             id = id[3:]
             id = id[:len(id) - 1]
 
         u = await self.bot.fetch_user(user_id=int(id))
-        await u.send(m)
+        await u.send(' '.join(msg))
 
     @commands.command(name="conf.list")
     @has_permissions(administrator=True)

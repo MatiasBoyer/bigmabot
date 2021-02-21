@@ -21,6 +21,7 @@ from cmds.file import File
 from cmds.answers import Answers
 from cmds.adminonly import AdminOnly
 from cmds.images import Images
+from cmds.fun import Fun
 import cmds.memes as memes
 # endregion
 
@@ -28,8 +29,24 @@ import cmds.memes as memes
 mediatypes = [".png", ".jpg", ".jpeg", ".mp4", ".mp3", ".gif"]
 
 token = ""
-cbenabled = False
 imgflipData = memes.imgflipData(False, "", "")
+# endregion
+
+# region BOT CONFIG
+config = configparser.ConfigParser()
+config.read("config.ini")
+
+# IMGFLIP
+imgflipData.isEnabled = config["IMGFLIP"]["Enable"] == "True"
+imgflipData.username = config["IMGFLIP"]["Username"]
+imgflipData.password = config["IMGFLIP"]["Password"]
+
+# CLEVERBOT
+cbenabled = config["CLEVERBOT"]["Enable"] == "True"
+
+# TOKEN
+token = config["BOTCONF"]["Token"]
+
 # endregion
 
 # region BOT INITIALIZATION
@@ -42,6 +59,7 @@ bot.add_cog(RandomCommands(bot, cbenabled))
 bot.add_cog(Answers())
 bot.add_cog(Images())
 bot.add_cog(memes.Memes(imgflipData))
+bot.add_cog(Fun(bot))
 
 
 @bot.event
@@ -132,23 +150,6 @@ async def on_command_error(ctx, error):
                 f"*** ERROR ! ***\nCOMMAND USED: {ctx.message.content}\n{error}\n")
     await ctx.send(error)
     raise error
-
-# endregion
-
-# region BOT CONFIG
-config = configparser.ConfigParser()
-config.read("config.ini")
-
-# IMGFLIP
-imgflipData.isEnabled = config["IMGFLIP"]["Enable"] == "True"
-imgflipData.username = config["IMGFLIP"]["Username"]
-imgflipData.password = config["IMGFLIP"]["Password"]
-
-# CLEVERBOT
-cbenabled = config["CLEVERBOT"]["Enable"] == "True"
-
-# TOKEN
-token = config["BOTCONF"]["Token"]
 
 # endregion
 
