@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import bot
 from discord.ext.commands.core import command, has_permissions
 from cleverbot_free.cbapi import CleverBot
+from datetime import datetime
 
 
 class RandomCommands(commands.Cog):
@@ -21,14 +22,17 @@ class RandomCommands(commands.Cog):
         if cbenabled == True:
             self.cb.init()
 
-    @commands.command(name="cleverbot.ask", brief="DISABLED!")
-    async def cleverbot_ask(self, ctx, msg):
+    @commands.command(name="cleverbot.ask")
+    async def cleverbot_ask(self, ctx, *msg):
         if self.cbenabled == False:
             await ctx.send("bot has this command disabled!")
             return
-        await ctx.send(self.cb.getResponse(f"cleverbot says: {msg}"))
-        #cb_response = cb.single_exchange(msg)
 
-    @commands.command(name="gitlink")
+        await ctx.send("Thinking... ⏳")
+        response = self.cb.getResponse(' '.join(msg))
+        await ctx.send(f"cleverbot says: {response}")
+        # cb_response = cb.single_exchange(msg)
+
+    @ commands.command(name="gitlink")
     async def gitlink(self, ctx):
         await ctx.send("https://github.com/MatiasBoyer/bigmabot")
