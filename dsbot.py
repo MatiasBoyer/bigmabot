@@ -22,6 +22,7 @@ from cmds.answers import Answers
 from cmds.adminonly import AdminOnly
 from cmds.images import Images
 from cmds.fun import Fun
+from cmds.video import Video
 import cmds.memes as memes
 # endregion
 
@@ -60,6 +61,7 @@ bot.add_cog(Answers())
 bot.add_cog(Images())
 bot.add_cog(memes.Memes(imgflipData))
 bot.add_cog(Fun(bot))
+bot.add_cog(Video())
 
 
 @bot.event
