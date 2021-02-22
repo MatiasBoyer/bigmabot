@@ -1,0 +1,88 @@
+{
+    "MOVESET": [
+        {
+            "TEXT": "{attacker.mention} uses a knife on {attacked.mention}!",
+            "SEND_DMG_MESSAGE": true,
+            "DAMAGE_MSG": "",
+            "CRIT_TEXT": " Damn! That should hurt a lot!",
+            "CRIT_CHANCE": 25,
+            "CRIT_MULTIPLIER_MIN": 1.2,
+            "CRIT_MULTIPLIER_MAX": 1.5,
+            "FAIL_RATE": 20,
+            "MIN_DAMAGE": 20,
+            "MAX_DAMAGE": 35
+        },
+        {
+            "TEXT": "{attacker.mention} tries to lick the floor! What is he doing ?!??!",
+            "SEND_DMG_MESSAGE": false,
+            "DAMAGE_MSG": "",
+            "CRIT_TEXT": " ",
+            "CRIT_CHANCE": 25,
+            "CRIT_MULTIPLIER_MIN": 1.2,
+            "CRIT_MULTIPLIER_MAX": 1.5,
+            "FAIL_RATE": 20,
+            "MIN_DAMAGE": 0,
+            "MAX_DAMAGE": 1
+        },
+        {
+            "TEXT": "{attacker.mention} throws a knife at the air!",
+            "SEND_DMG_MESSAGE": true,
+            "DAMAGE_MSG": "and it landed right on {attacked.mention}! He did {damage}% of damage!",
+            "CRIT_TEXT": " ",
+            "CRIT_CHANCE": 0,
+            "CRIT_MULTIPLIER_MIN": 1,
+            "CRIT_MULTIPLIER_MAX": 1,
+            "FAIL_RATE": 50,
+            "MIN_DAMAGE": 40,
+            "MAX_DAMAGE": 80
+        },
+        {
+            "TEXT": "{attacker.mention} tries to run away!",
+            "SEND_DMG_MESSAGE": true,
+            "DAMAGE_MSG": "Nevermind!! He came back and landed a punch right on {attacked.mention}'s face, doing {damage}% of damage!",
+            "CRIT_TEXT": " ",
+            "CRIT_CHANCE": 0,
+            "CRIT_MULTIPLIER_MIN": 1,
+            "CRIT_MULTIPLIER_MAX": 1,
+            "FAIL_RATE": 30,
+            "MIN_DAMAGE": 40,
+            "MAX_DAMAGE": 50
+        },
+        {
+            "TEXT": "{attacker.mention} gets a gun from somewhere!",
+            "SEND_DMG_MESSAGE": true,
+            "DAMAGE_MSG": "... and shot {attacked.mention}!, doing {damage}% of damage!",
+            "CRIT_TEXT": " The bullet landed in a critical zone too!",
+            "CRIT_CHANCE": 30,
+            "CRIT_MULTIPLIER_MIN": 1.5,
+            "CRIT_MULTIPLIER_MAX": 2,
+            "FAIL_RATE": 15,
+            "MIN_DAMAGE": 40,
+            "MAX_DAMAGE": 50
+        },
+        {
+            "TEXT": "{attacker.mention} eats an apple! It heals himself one point!",
+            "SEND_DMG_MESSAGE": false,
+            "DAMAGE_MSG": "",
+            "CRIT_TEXT": "",
+            "CRIT_CHANCE": 0,
+            "CRIT_MULTIPLIER_MIN": 1,
+            "CRIT_MULTIPLIER_MAX": 1,
+            "FAIL_RATE": 0,
+            "MIN_DAMAGE": -1,
+            "MAX_DAMAGE": -1
+        },
+        {
+            "TEXT": "{attacker.mention} shoots a magnum at {attacked.mention}'s face!",
+            "SEND_DMG_MESSAGE": true,
+            "DAMAGE_MSG": "... and did {damage}% of damage, ouch!",
+            "CRIT_TEXT": " Somehow the bullet bounced and hit {attacked.mention} twice!",
+            "CRIT_CHANCE": 25,
+            "CRIT_MULTIPLIER_MIN": 1.3,
+            "CRIT_MULTIPLIER_MAX": 1.5,
+            "FAIL_RATE": 50,
+            "MIN_DAMAGE": 40,
+            "MAX_DAMAGE": 45
+        }
+    ]
+}
