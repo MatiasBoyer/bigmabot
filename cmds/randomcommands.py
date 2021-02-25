@@ -29,15 +29,15 @@ class RandomCommands(commands.Cog):
             return
 
         try:
-            await ctx.send("Thinking... ⏳")
+            m = await ctx.send("Thinking... ⏳")
 
             response, correct = await self.bot.loop.run_in_executor(None, self.do_cleverbot_ask,
                                                                     ' '.join(msg))
 
             if correct == True:
-                await ctx.send(f"cleverbot says: {response}")
+                await m.edit(content=(f"cleverbot says: {response}"))
             else:
-                await ctx.send(f"Error! {response}")
+                await m.edit(content=(f"Error! {response}"))
         except Exception as e:
             await ctx.send(str(e))
         # cb_response = cb.single_exchange(msg)

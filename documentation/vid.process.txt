@@ -1,0 +1,15 @@
+$vid.process
+each parameter should be separated by comma, and the order doesn't matter.
+PARAMETERS:
+	set_fps=NUMBER		- Sets the video fps to a number
+	top_text=TEXT		- Sets a top text
+	bottom_text=TEXT	- Sets a bottom text
+	painting			- Makes the video like a painting
+	bitrate=NUMBERk		- Sets the bitrate of the video to NUMBER
+	mirror_x
+	mirror_y
+	fadein=FLOAT		- Fade IN time in seconds
+	fadeout=FLOAT		- Fade OUT time in seconds
+	blacknwhite
+	
+ex: $vid.process top_text=HELLO, bottom_text=HELLO WORLD, set_fps=5, painting, mirror_x, mirror_y

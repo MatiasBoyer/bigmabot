@@ -5,10 +5,9 @@ import math
 import aiohttp
 import aiofiles
 import resources.guildsave as guildsave
-import resources.dsbot_extensions as ext
 from discord.ext import commands
 from discord.ext.commands.core import has_permissions
-from pathlib import Path
+from resources.ytdownloader import YTDL_Audio, YTDL_Video
 
 
 def truncate(number, digits) -> float:
@@ -17,6 +16,10 @@ def truncate(number, digits) -> float:
 
 
 class File(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
     @commands.command(name="file.upload")
     async def file_upload(self, ctx):
         guildconf = await guildsave.returnGuildJson(ctx,
@@ -146,3 +149,29 @@ class File(commands.Cog):
             await ctx.send("Removed successfuly!")
         else:
             await ctx.send("Failed to remove file!")
+
+    @commands.command(name="dl.audiofromyt")
+    async def dl_audiofromyt(self, ctx, *, url):
+        msg = await ctx.send("OK! Downloading...")
+        fname = ""
+
+        async with ctx.typing():
+            fname = await YTDL_Audio.download_audio(url, loop=self.bot.loop)
+            await ctx.send(file=discord.File(fname))
+            await msg.delete()
+
+        if len(fname) > 1:
+            os.remove(fname)
+
+    @commands.command(name="dl.videofromyt")
+    async def dl_videofromyt(self, ctx, *, url):
+        msg = await ctx.send("OK! Downloading...")
+        fname = ""
+
+        async with ctx.typing():
+            fname = await YTDL_Video.download_video(url, loop=self.bot.loop)
+            await ctx.send(file=discord.File(fname))
+            await msg.delete()
+
+        if len(fname) > 1:
+            os.remove(fname)
