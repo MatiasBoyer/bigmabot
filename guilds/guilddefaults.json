@@ -4,6 +4,7 @@
     "AnswerCooldown": 2.5,
     "HasPermissionToFileCommands": false,
     "MaxStorageBytes": 1000000.0,
+    "tts_deflang": "en",
     "userConfig": {
         "switches": {
             "errorlogging": true,

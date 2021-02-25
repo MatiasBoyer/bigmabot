@@ -28,62 +28,91 @@ def int_tryparse(str):
         return None, False
 
 
-async def process_parameter(ctx, key, val, clip):
-    correct = False
-    ret = clip
+def float_tryparse(str):
+    try:
+        return float(str), True
+    except ValueError:
+        return None, False
 
-    rdict = {}
 
+def write_videofile(clip, videoname, bitrate):
+    return clip.write_videofile(videoname, bitrate=bitrate, audio_bitrate=bitrate)
+
+
+def process_parameter(key, val, clip):
     if key == "set_fps":
-        f = int_tryparse(val)
+        result, correct = int_tryparse(val)
+        if correct == False:
+            return f"Couldn't parse {key}:{val} into an integer!", False
 
-        if f[1] == False:
-            await ctx.send(f"Error parsing '{key}={val}' into an int.")
-            correct = False
+        clip = clip.set_fps(fps=result)
 
-        ret = clip.set_fps(f[0])
-        correct = True
+        return clip, True
 
     if key == "top_text":
-        txt = (TextClip(val, fontsize=32,
-                        color='white').set_position("top").set_duration(clip.duration))
-        ret = CompositeVideoClip([clip, txt])
-        correct = True
+        txt = TextClip(val, fontsize=30, color='white').set_position(
+            'top').set_duration(clip.duration)
+        clip = CompositeVideoClip([clip, txt])
+
+        return clip, True
 
     if key == "bottom_text":
-        txt = (TextClip(val, fontsize=32,
-                        color='white').set_position("bottom").set_duration(clip.duration))
-        ret = CompositeVideoClip([clip, txt])
-        correct = True
+        txt = TextClip(val, fontsize=30, color='white').set_position(
+            'bottom').set_duration(clip.duration)
+        clip = CompositeVideoClip([clip, txt])
+        return clip, True
 
-    if key == "rotate":
-        f = int_tryparse(val)
+    if key == "painting":
+        clip = clip.fx(vfx.painting)
+        return clip, True
 
-        if f[1] == False:
-            await ctx.send(f"Error parsing '{key}={val}' into an int.")
-            correct = False
+    if key == "mirror_x":
+        clip = clip.fx(vfx.mirror_x)
+        return clip, True
 
-        ret = clip.rotate(f[0])
-        correct = True
+    if key == "mirror_y":
+        clip = clip.fx(vfx.mirror_y)
+        return clip, True
 
-    if key == "bitrate":
-        if 'k' not in val:
-            val += 'k'
+    if key == "blacknwhite":
+        clip = clip.fx(vfx.blackwhite)
+        return clip, True
 
-        brate = int(val[:len(val) - 1])
+    if key == "fadein":
+        result, correct = float_tryparse(val)
+        if correct == False:
+            return f"Couldn't parse {key}:{val} into an integer!", False
 
-        if brate > 3000:
-            brate = 3000
+        clip = clip.fx(vfx.fadein, result)
+        return clip, True
 
-            await ctx.send("bitrate > 3000, clamping to 3000...")
+    if key == "fadeout":
+        result, correct = float_tryparse(val)
+        if correct == False:
+            return f"Couldn't parse {key}:{val} into an integer!", False
 
-        rdict["bitrate"] = val
-        correct = True
+        clip = clip.fx(vfx.fadeout, result)
+        return clip, True
 
-    return correct, ret, rdict
+    if key == "invert_colors":
+        clip = clip.fx(vfx.invert_colors)
+        return clip, True
+
+    if key == "freeze":
+        r = val.split(':')
+        clip = clip.fx(vfx.freeze, t=float_tryparse(
+            r[0]), freeze_duration=float_tryparse(r[1]))
+
+        return clip, True
+
+    return None, False
 
 
 class Video(commands.Cog):
+    bot = None
+
+    def __init__(self, bot):
+        self.bot = bot
 
     async def trygetVideo(self, ctx, *args):
         video_url = ""
@@ -100,13 +129,13 @@ class Video(commands.Cog):
 
             if fetched_m == None:
                 await ctx.send("No videos found in your message.")
-                return None
+                return None, False
             else:
                 video_url = fetched_m.attachments[0].url
 
         if video_url[len(video_url) - 4:] != ".mp4":
             await ctx.send("Video should be .mp4!")
-            return None
+            return None, False
 
         async with aiohttp.ClientSession() as session:
             async with session.get(video_url) as resp:
@@ -120,52 +149,67 @@ class Video(commands.Cog):
                 await f.write(await resp.read())
                 await f.close()
 
-                return fname
+                return fname, True
 
     @commands.command(name="vid.process")
     async def vid_process(self, ctx, *args):
-        video_name = await self.trygetVideo(ctx, args)
-        if video_name == None:
-            return
-
+        videoname = None
+        clip = None
         try:
+            # GET THE VIDEO
+            videoname, videoresult = await self.trygetVideo(ctx, args)
+            if videoresult == False:
+                return
+
+            bitrate = '500k'
+            clip = VideoFileClip(videoname)
+
+            # PROCESS ARGUMENTS INTO A DICTIONARY FOR EASY ACCESS
             _args = ((' '.join(args)).split(','))
-            args_dict = dict()
+            arguments = dict()
             for x in _args:
-                splt = x.split('=')
-                args_dict[splt[0].strip()] = splt[1]
+                y = x.split('=')
+                y.append("")
 
-            # , target_resolution=(1024, 768))
-            clip = VideoFileClip(video_name)
-            endclip = clip
+                arguments[(y[0].strip())] = y[1]
 
-            bitrate = "300k"
+            # PROCESS EACH ARGUMENT
+            for x in arguments:
+                key = x
+                val = arguments[x]
 
-            print(args_dict)
-            for i in args_dict:
-                key = i
-                val = args_dict[key]
+                if key == "bitrate":
+                    if 'k' not in val:
+                        val += 'k'
 
-                print(f"{key} : {val}")
+                    bitrate = val
+                    continue
 
-                # , composite_list)
-                pp = await process_parameter(ctx, key, val, endclip)
+                result, correct = await self.bot.loop.run_in_executor(None, process_parameter, key, val, clip)
 
-                if pp[0] == True:
-                    endclip = pp[1]
+                if correct:
+                    clip = result
+                else:
+                    await ctx.send(f"Error! ->{result}")
 
-                    for x in pp[2]:
-                        if x == "bitrate":
-                            bitrate = pp[2]["bitrate"]
+            # ONCE THE VIDEO IS COMPLETE, WE WRITE IT TO A FILE
+            finalvideoname = f"./temp/{ctx.message.id}-result.mp4"
+            await self.bot.loop.run_in_executor(None, write_videofile, clip, finalvideoname, bitrate)
 
-            fname = f"{video_name}-OUT.mp4"
+            # WE SEND THE VIDEO!
+            await ctx.send(file=discord.File(finalvideoname))
 
-            print(bitrate)
-            endclip.write_videofile(fname, bitrate=bitrate)
+            # WE REMOVE THE TEMPORARY FILES. SPACE IS IMPORTANT!
+            clip.close()
 
-            await ctx.send(file=discord.File(fname))
+            os.remove(videoname)
+            os.remove(finalvideoname)
 
-            os.remove(fname)
-            os.remove(video_name)
-        except ValueError as v:
-            await ctx.send(f"Error -> {v}")
+        except Exception as e:
+            await ctx.send(str(e))
+
+            if clip != None:
+                clip.close()
+
+            if videoname != None:
+                os.remove(videoname)

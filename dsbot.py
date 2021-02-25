@@ -23,6 +23,7 @@ from cmds.adminonly import AdminOnly
 from cmds.images import Images
 from cmds.fun import Fun
 from cmds.video import Video
+from cmds.audio import Audio
 import cmds.memes as memes
 # endregion
 
@@ -61,7 +62,8 @@ bot.add_cog(Answers())
 bot.add_cog(Images())
 bot.add_cog(memes.Memes(imgflipData))
 bot.add_cog(Fun(bot))
-bot.add_cog(Video())
+bot.add_cog(Video(bot))
+bot.add_cog(Audio(bot))
 
 
 @bot.event
@@ -77,13 +79,15 @@ async def on_message(message):
         return
 
     # COMMAND HANDLING
-    guildsettings = await guildsave.returnGuildJson(
-        message.channel, str(message.guild.id))
-
     author_colored = colored((message.author), "red")
     print(f"{author_colored} -> {message.content}")
 
     # CHECK IF GUILD PERMITS THE COMMAND
+    if message.guild == None:
+        return
+
+    guildsettings = await guildsave.returnGuildJson(
+        message.channel, str(message.guild.id))
     cmd_category = message.content[1:].split('.')
 
     if cmd_category[0] in guildsettings["userConfig"]["switches"]:

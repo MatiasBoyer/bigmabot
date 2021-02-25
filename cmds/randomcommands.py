@@ -1,19 +1,12 @@
-import resources.dsbot_extensions as ext
-import asyncio
-import discord
-from playsound import playsound
 from discord.ext import commands
-from discord.ext.commands import bot
 from discord.ext.commands.core import command, has_permissions
 from cleverbot_free.cbapi import CleverBot
-from datetime import datetime
 
 
 class RandomCommands(commands.Cog):
 
     cbenabled = False
     cb = CleverBot()
-    bot = None
 
     def __init__(self, _bot, cbenabled):
         self.cb = CleverBot()
@@ -22,15 +15,31 @@ class RandomCommands(commands.Cog):
         if cbenabled == True:
             self.cb.init()
 
-    @commands.command(name="cleverbot.ask")
+    def do_cleverbot_ask(self, msg):
+        try:
+            response = self.cb.getResponse(' '.join(msg))
+            return response, True
+        except Exception as e:
+            return str(e), False
+
+    @commands.command(name="askcleverbot")
     async def cleverbot_ask(self, ctx, *msg):
         if self.cbenabled == False:
             await ctx.send("bot has this command disabled!")
             return
 
-        await ctx.send("Thinking... ⏳")
-        response = self.cb.getResponse(' '.join(msg))
-        await ctx.send(f"cleverbot says: {response}")
+        try:
+            await ctx.send("Thinking... ⏳")
+
+            response, correct = await self.bot.loop.run_in_executor(None, self.do_cleverbot_ask,
+                                                                    ' '.join(msg))
+
+            if correct == True:
+                await ctx.send(f"cleverbot says: {response}")
+            else:
+                await ctx.send(f"Error! {response}")
+        except Exception as e:
+            await ctx.send(str(e))
         # cb_response = cb.single_exchange(msg)
 
     @ commands.command(name="gitlink")

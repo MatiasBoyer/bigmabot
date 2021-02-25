@@ -13,6 +13,57 @@ with open("./resources/battle_moveset.json", 'r') as f:
     moveset_file = f.read()
     moveset_json = json.loads(moveset_file)
 
+HANGMANPICS = ['''
+  +---+
+  |   |\t\t{word}
+      |
+      |\t\t{failure}
+      |
+      |
+=========''', '''
+  +---+
+  |   |\t\t{word}
+  O   |
+      |\t\t{failure}
+      |
+      |
+=========''', '''
+  +---+
+  |   |\t\t{word}
+  O   |
+  |   |\t\t{failure}
+      |
+      |
+=========''', '''
+  +---+
+  |   |\t\t{word}
+  O   |
+ /|   |\t\t{failure}
+      |
+      |
+=========''', '''
+  +---+
+  |   |\t\t{word}
+  O   |
+ /|\  |\t\t{failure}
+      |
+      |
+=========''', '''
+  +---+
+  |   |\t\t{word}
+  O   |
+ /|\  |\t\t{failure}
+ /    |
+      |
+=========''', '''
+  +---+
+  |   |\t\t{word}
+  O   |
+ /|\  |\t\t{failure}
+ / \  |
+      |
+=========''']
+
 
 def returnRandomMove():
     random.shuffle(moveset_json["MOVESET"])
@@ -180,3 +231,81 @@ class Fun(commands.Cog):
         elif user_b_hp > 0:
             winner = user_b_m
         await ctx.send(f"Ding ding ding! We have a winner! {winner.mention} wins!")
+
+    @commands.command("fun.hangman")
+    async def hangman(self, ctx):
+        await ctx.author.send("Please tell me which word you want to play in HANGMAN!\nPlease keep in mind that if your message has UNDERSCORES, it will not work.")
+        await ctx.send(f"{ctx.author.mention} i've sent you a DM! Please answer it to play HANGMAN!")
+
+        def check_author(m):
+            if '_' in m.content:
+                return False
+
+            return m.author == ctx.author and isinstance(m.channel, discord.channel.DMChannel)
+
+        def check_channel(m):
+            return m.channel == ctx.channel
+
+        def findIndex(s, ch):
+            return [i for i, ltr in enumerate(s) if ltr == ch]
+
+        msg = await self.bot.wait_for('message', check=check_author)
+
+        hangman_inprocess = True
+
+        hangman_word = list(msg.content.upper())
+        hangman_message = ['_']*len(hangman_word)
+
+        for x in range(0, len(hangman_word)):
+            if hangman_word[x] == ' ':
+                hangman_message[x] = ' '
+
+        def setletter(letter):
+            for x in range(0, len(hangman_word)):
+                if hangman_word[x] == letter:
+                    hangman_message[x] = letter
+
+        failures = []
+        max_failures = len(HANGMANPICS)
+
+        def returnMessage():
+            return f"`{HANGMANPICS[len(failures)]}`".format(word=(''.join(hangman_message)), failure=''.join(failures))
+
+        sent_message = await ctx.send(returnMessage())
+        while(hangman_inprocess and len(failures) < max_failures):
+            msg = await self.bot.wait_for('message', check=check_channel)
+
+            msg_content = msg.content.upper()
+
+            if msg_content == "END_HANGMAN":
+                await ctx.send("HANGMAN game ended!")
+                hangman_inprocess = False
+                return
+
+            if msg_content == ''.join(hangman_word):
+                await ctx.send(f"Ding ding ding! {msg.author.mention} won everything! The word was {''.join(hangman_word)}")
+                return
+
+            if len(msg_content) != 1:
+                continue
+
+            letter = msg_content[0]
+            if letter in hangman_word:
+                # await ctx.send(f"Letter {letter} is correct!")
+                setletter(letter)
+
+                await sent_message.edit(content=(returnMessage()))
+            else:
+                failures.append(letter)
+                await ctx.send(f"Letter {letter} is INcorrect!")
+                await sent_message.edit(content=(returnMessage()))
+
+            if '_' not in hangman_message:
+                await ctx.send(f"Congrats! The word was {''.join(hangman_word)}")
+
+                hangman_inprocess = False
+                return
+
+        if len(failures) >= max_failures:
+            await ctx.send(f"You lost! The word was {''.join(hangman_word)}")
+            return
