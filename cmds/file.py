@@ -157,11 +157,14 @@ class File(commands.Cog):
 
         async with ctx.typing():
             fname = await YTDL_Audio.download_audio(url, loop=self.bot.loop)
-            await ctx.send(file=discord.File(fname))
-            await msg.delete()
 
-        if len(fname) > 1:
-            os.remove(fname)
+            await msg.delete()
+            if os.path.getsize(fname) < 8e+6:
+                await ctx.send(file=discord.File(fname))
+            else:
+                await ctx.send("File ended up being too large to send (file > 8 MB)")
+
+        os.remove(fname)
 
     @commands.command(name="dl.videofromyt")
     async def dl_videofromyt(self, ctx, *, url):
@@ -170,8 +173,11 @@ class File(commands.Cog):
 
         async with ctx.typing():
             fname = await YTDL_Video.download_video(url, loop=self.bot.loop)
-            await ctx.send(file=discord.File(fname))
-            await msg.delete()
 
-        if len(fname) > 1:
-            os.remove(fname)
+            await msg.delete()
+            if os.path.getsize(fname) < 8e+6:
+                await ctx.send(file=discord.File(fname))
+            else:
+                await ctx.send("File ended up being too large to send (file > 8 MB)")
+
+        os.remove(fname)

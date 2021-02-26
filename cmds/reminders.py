@@ -49,7 +49,7 @@ class CSV_WR():
     def __init__(self, filename, delimiter):
         self.filename = filename
         self.file = open(filename, newline='',
-                         encoding="raw_unicode_escape", errors='replace')
+                         encoding="utf-8", errors='replace')
         self.data = list(csv.reader(self.file, delimiter=delimiter))
 
         # CLEANUP
@@ -63,7 +63,7 @@ class CSV_WR():
         self.save_data()
 
     def save_data(self):
-        with open(self.filename, 'w', encoding="raw_unicode_escape", errors='replace') as file:
+        with open(self.filename, 'w', encoding="utf-8", errors='replace') as file:
             for x in self.data:
                 file.write(f"{';'.join(x)}\n")
 
@@ -102,9 +102,7 @@ class CSV_WR():
         correct, date_time = convertTo_datetime(dateObj[1])
 
         if correct == False:
-            return False
-
-        if date_time < datetime.now():
+            print("An error happened whilst parsing date_time !")
             return False
 
         self.data.remove(dateObj)
