@@ -1,8 +1,13 @@
 import json
 import time
 import os
+import sqlite3
 from pathlib import Path
 
+# SQL DBs
+
+
+# JSON DBs
 defaultsjson = None
 defaultsdata = None
 with open("./guilds/guilddefaults.json", 'r') as f:
